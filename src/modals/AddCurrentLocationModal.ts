@@ -1,9 +1,8 @@
 import type { ButtonComponent } from 'obsidian';
-import { Modal, Notice, Setting, TextComponent} from 'obsidian';
+import { App, Modal, Notice, Setting, TextComponent} from 'obsidian';
 import type LocationAddPlugin from "../main";
-import type { LocationModalData } from '../utils/ModalHelper';
 
-export class AddCurrentLocation extends Modal {
+export class AddCurrentLocationModal extends Modal {
 	plugin: LocationAddPlugin;
     
     query: string;
@@ -11,17 +10,14 @@ export class AddCurrentLocation extends Modal {
     title: string;
 
     searchBtn?: ButtonComponent;
-
-    submitCallback?: (res: LocationModalData) => void;
-    closeCallback?: (err?: Error) => void;
     
-    constructor(plugin: LocationAddPlugin) {
-        super(plugin.app);
+    constructor(app: App) {
+        super(app);
     }
 
 	onOpen() {
 		let {contentEl} = this;
-		new Notice('Note yet implemented');
+		new Notice('Not yet implemented');
         this.close();
 	}
 

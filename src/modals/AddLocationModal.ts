@@ -1,26 +1,20 @@
 import type { ButtonComponent } from 'obsidian';
-import { Modal, Notice, Setting, TextComponent} from 'obsidian';
-import type LocationAddPlugin from "../main";
+import { App, Modal, Notice, Setting} from 'obsidian';
+import LocationAddPlugin from "../main";
+import { SearchResultsModal } from './SearchResultsModal';
 
 export class AddLocationModal extends Modal {
     plugin: LocationAddPlugin;
+    title: string = 'Location Search';
 
-    query: string;
-	isBusy: boolean;
-	title: string;
-
-    searchBtn?: ButtonComponent;
-
-    /**
-     * name
-     */
-    private onSubmit (result: string){
-        new Notice(`You searched for: ${result}!`);
+    private onSubmit (app: App, searchText: string){
+        new Notice(`You searched for: ${searchText}!`);
+        new SearchResultsModal(app, searchText).open();
     }
     
-    constructor(plugin: LocationAddPlugin) {
-        super(plugin.app);
-        this.setTitle('Location Search');
+    constructor(app: App) {
+        super(app);
+        this.setTitle(this.title);
 
         let searchText ='';
 
@@ -36,11 +30,11 @@ export class AddLocationModal extends Modal {
         new Setting(this.contentEl)
             .addButton((btn) =>
                 btn
-                .setButtonText('Submit')
+                .setButtonText('Search')
                 .setCta()
                 .onClick(() => {
                     this.close();
-                    this.onSubmit(searchText);
+                    this.onSubmit(app, searchText);
                 }));
     }
 

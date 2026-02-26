@@ -1,7 +1,7 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin } from 'obsidian';
 import { DEFAULT_SETTINGS, LocationAddSettings, LocationAddTab } from './settings/settings';
 import { AddLocationModal } from './modals/AddLocationModal';
-import { AddCurrentLocation } from './modals/AddCurrentLocationModal';
+import { AddCurrentLocationModal } from './modals/AddCurrentLocationModal';
 
 
 // Remember to rename these classes and interfaces!
@@ -14,7 +14,7 @@ export default class LocationAddPlugin extends Plugin {
 
 		// This creates an icon in the left ribbon.
 		this.addRibbonIcon('map', 'New Location', () => {
-				new AddLocationModal(this).open();
+				new AddLocationModal(this.app).open();
 			})
 
 		// This adds a new location
@@ -22,7 +22,7 @@ export default class LocationAddPlugin extends Plugin {
 			id: 'new-location',
 			name: 'Add a new location',
 			callback: () => {
-				new AddLocationModal(this).open();
+				new AddLocationModal(this.app).open();
 			}
 		});
 
@@ -31,7 +31,7 @@ export default class LocationAddPlugin extends Plugin {
 			id: 'new-location-from-gps',
 			name: 'Add current location',
 			callback: () => {
-				new AddCurrentLocation(this).open();
+				new AddCurrentLocationModal(this.app).open();
 			}
 		});
 

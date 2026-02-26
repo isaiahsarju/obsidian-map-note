@@ -1,8 +1,16 @@
-/*
+.maplocation {
+  border: 1px solid var(--background-modifier-border);
+  padding: 10px;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.maplocation__name {
+  font-weight: 600;
+}
 
-If your plugin does not need CSS, delete this file.
-
-*/
+.maplocation__display_name {
+  color: var(--text-muted);
+  font-weight: 300;
+}
+.maplocation__type {
+  color: var(--text-muted);
+}
