@@ -31,7 +31,7 @@ export class LocationAddTab extends PluginSettingTab {
 			.setDesc('See README docs for example template file')
 			.addText((text) =>
 				text
-				.setPlaceholder('CLIENT_ID')
+				.setPlaceholder('path/to/template/file')
 				.setValue(this.plugin.settings.templatePath)
 				.onChange(async (value) => {
 					this.plugin.settings.templatePath = value;
