@@ -5,31 +5,25 @@ import { MapLocation } from '../models/MapLocation';
 
 export class SearchResultsModal extends SuggestModal<MapLocation> {
     plugin: LocationAddPlugin;
-
-    title: string = 'Location Results';
+    private initialQuery: string = ' ';
     
     constructor(
         app: App,
         private readonly suggestion: MapLocation[],
         private onChoose: (error: Error | null, result: MapLocation) => void){
         super(app);
-        this.setTitle(this.title);
     }
 
     // Returns all available mapLocations.
     getSuggestions(query: string): MapLocation[] {
         return this.suggestion.filter(mapLocation => {
             const searchQuery = query?.toLowerCase();
-            if (searchQuery == undefined || searchQuery == null || searchQuery == ''){
-                return
-            } else {
-                return (
+            return (
                 mapLocation.name?.toLowerCase().includes(searchQuery) ||
                 mapLocation.display_name?.toLowerCase().includes(searchQuery) ||
                 mapLocation.type?.toLowerCase().includes(searchQuery));
-            }
-        });
-    }
+            });
+        }
 
     // Renders each suggestion item.
     renderSuggestion(mapLocation: MapLocation, el: HTMLElement): void {
@@ -47,5 +41,12 @@ export class SearchResultsModal extends SuggestModal<MapLocation> {
 
     onOpen() {
         let {contentEl} = this;
+        // current hack from https://forum.obsidian.md/t/initial-query-for-suggestmodal/62872
+        // to get it to display all options until text is input into the suggest modal
+        if (this.initialQuery) {
+            this.inputEl.value = this.initialQuery;
+            //this.inputEl.value = this.plugin.settings.templatePath;
+            this.inputEl.dispatchEvent(new InputEvent("input"));
+        }
     }
 }

@@ -3,14 +3,10 @@ import type LocationAddPlugin from "../main";
 
 export interface LocationAddSettings {
 	templatePath: string;
-	openStreetsCLIENT_SECRET: string;
-	fUseDevURI: boolean;
 }
 
 export const DEFAULT_SETTINGS: LocationAddSettings = {
 	templatePath: '',
-	openStreetsCLIENT_SECRET: '',
-	fUseDevURI: false
 }
 
 export class LocationAddTab extends PluginSettingTab {

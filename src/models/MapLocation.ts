@@ -2,7 +2,7 @@ export interface MapLocation {
     addresstypei?: string;
     boundingbox?: string[];
     class?: string;
-    display_name?: string;
+    display_name: string;
     importance?: number;
     lat: string;
     licence?: string;
