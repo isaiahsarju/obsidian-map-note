@@ -17,7 +17,7 @@ export default class LocationAddPlugin extends Plugin {
 		await this.loadSettings();
 
 		// This creates an icon in the left ribbon.
-		this.addRibbonIcon('map', 'New Location', () =>  this.createNewLocationNote())
+		this.addRibbonIcon('map-pin-plus', 'New Location', () =>  this.createNewLocationNote())
 
 		// This adds a new location
 		this.addCommand({
