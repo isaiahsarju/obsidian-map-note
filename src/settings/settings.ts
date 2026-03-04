@@ -2,26 +2,49 @@ import { App, PluginSettingTab, Setting, ButtonComponent, TextComponent, ColorCo
 import type LocationAddPlugin from "../main";
 import { IconColorAssociation } from "../models/IconColorAssociation"
 
+/**
+ * An interface describing LocationAddSettings
+ * @public
+ */
 export interface LocationAddSettings {
+	/** Path to template */
 	templatePath: string;
+	/** Boolean to perform icon and color associations */
 	iconColorLookup: boolean,
+	/** Dictionary where the key is the type and members are color and icon */
 	icaDict: {[id: string] : IconColorAssociation},
 }
 
+/**
+ * A constant dictionary with default LocationAddSettings
+ * @public
+ */
 export const DEFAULT_SETTINGS: LocationAddSettings = {
+	/** @inheritdoc LocationAddSettings.templatePath */
 	templatePath: '',
+	/** @inheritdoc LocationAddSettings.iconColorLookup */
 	iconColorLookup: false,
+	/** @inheritdoc LocationAddSettings.icaDict */
 	icaDict: {}
 }
 
+/**
+ * Plugin settings class for LocationAddPlugin
+ * @implements {PluginSettingTab}
+ */
 export class LocationAddTab extends PluginSettingTab {
+	/** @inheritdoc LocationAddPlugin */
 	plugin: LocationAddPlugin;
+	/** {TextComponent} to denote location type to associate with icon and/or color */
 	private icaType: TextComponent;
 	private strType: string;
+	/** {TextComponent} to denote icon string */
 	private icaIcon: TextComponent;
 	private strIcon: string | undefined;
+	/** {ColorComponent} to denote color */
 	private icaColor: ColorComponent;
 	private strColor: string | undefined;
+	/** ButtonComponent used to create a new association of {type: IconColorAssociation} */
 	private icaAddBtn: ButtonComponent;
 
 	constructor(app: App, plugin: LocationAddPlugin) {
@@ -29,6 +52,10 @@ export class LocationAddTab extends PluginSettingTab {
 		this.plugin = plugin;
 	}
 
+	/**
+	 * Disable setting components
+	 * @param {boolean} disabled if `true` then then disable setting components
+	 */
 	setICADisabled(disabled: boolean): void {
 		this.icaType?.setDisabled(disabled);
 		this.icaIcon?.setDisabled(disabled);
@@ -36,11 +63,13 @@ export class LocationAddTab extends PluginSettingTab {
 		this.icaAddBtn?.setDisabled(disabled);
 	}
 
+	/** @inheritdoc {PluginSettingTab.display} */
 	display(): void {
 		const {containerEl} = this;
 		containerEl.empty();
 		const settings = this.plugin.settings;
 		
+		// Path to template file
 		// To-Do make this a searchable drop down
 		new Setting(containerEl)
 			.setName('Path to template file')
@@ -54,20 +83,22 @@ export class LocationAddTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 		
-		// Enable / disable icon lookups
+		// Description for toggle of using/not using associations
 		const icDesc = document.createDocumentFragment();
 		icDesc.appendText('Use custom associations for ');  
 		icDesc.createEl('a', {  
-			text: 'icons',  
-			attr: { href: 'https://lucide.dev/icons/', target: '_blank' }  
-		});
+				text: 'icons',  
+				attr: { href: 'https://lucide.dev/icons/', target: '_blank' }  
+			});
 		icDesc.appendText(' and ');
 		icDesc.createEl('a', {  
-			text: 'colors',  
-			attr: { href: 'https://en.wikipedia.org/wiki/Web_colors', target: '_blank' }  
-		});
+				text: 'colors',  
+				attr: { href: 'https://en.wikipedia.org/wiki/Web_colors', target: '_blank' }  
+			});
 
-		// toggle custom definitions on and off
+		// To-Do add backup toggle to search lucide and pick first item from searched array
+
+		// Toggle custom associations of {type: IconColorAssociation} on and off
 		new Setting(containerEl)  
 			.setName('Icon and color associations')
 			.setDesc(icDesc)
@@ -81,10 +112,10 @@ export class LocationAddTab extends PluginSettingTab {
 				})  
 			);
 		
-		// Icon and color association settings
+		// Input fields to define new {type: IconColorAssociation} dictionary member
 		const icAssociation = new Setting(containerEl)
             .setName('Add new icon color association')
-            .setDesc('Add or update type association with icon/color')
+            .setDesc('Add/update associations')
 			.setDisabled(!settings.iconColorLookup);
 		
 		// Set type of location (e.g. landmark, park, building)
@@ -118,6 +149,7 @@ export class LocationAddTab extends PluginSettingTab {
 			.setDisabled(!settings.iconColorLookup);
 		});
 
+		// Extra + button to create new dictionary entry of {type: IconColorAssociation}
 		icAssociation.addExtraButton((button) => {
 			button
 			.setIcon('plus')
@@ -128,14 +160,13 @@ export class LocationAddTab extends PluginSettingTab {
 					new Notice(strError);
 					return;
 				}
-				// To-Do check that one or both color or icon are set if not give notice
+				// Only makes sense to make association if there is a color and/or icon set
 				if (this.strIcon === undefined && this.strColor === undefined){
 					const strError: string = "Must supply an icon and/or color";
 					console.error(strError);
 					new Notice(strError);
 					return;
 				}
-				// To-Do add backup toggle to search lucide and pick first item from searched array
 				settings.icaDict[this.strType]= {'color':this.strColor, 'icon':this.strIcon};
 				this.strColor = undefined;
 				this.strIcon = undefined;
@@ -145,7 +176,7 @@ export class LocationAddTab extends PluginSettingTab {
 			.setDisabled(!settings.iconColorLookup)});
 
 		// Display list of set icons
-		// To-Do turn this into a clean list
+		// To-Do turn this into a clean list instead of a new setting for each one
 		// add listing for each item in the dictionary
 		for (let K in settings.icaDict){
 			if (K === undefined) return;
@@ -168,7 +199,7 @@ export class LocationAddTab extends PluginSettingTab {
 				})
 			}
 
-			// Delete this association button
+			// Button to delete thh association and remove it from the dictionary
 			icaSetting.addExtraButton((button) => {
 				button
 				.setIcon('trash')
