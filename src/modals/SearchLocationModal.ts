@@ -5,14 +5,25 @@ import { MapLocation } from 'models/MapLocation';
 import { RuntimeSettings } from 'models/RuntimeSettings';
 import { assert } from 'console';
 
+/**
+ * A Modal used to search for desired OSM location
+ */
 export class SearchLocationModal extends Modal {
     plugin: LocationAddPlugin;
     private readonly TITLE: string = 'Location Search';
     private readonly SEARCH_BUTTON_TEXT: string  = 'Search';
     private readonly SEARCHING_BUTTON_TEXT: string = 'Searching...';
+    /** Set to busy if button clicked and search occuring  */
     private isBusy = false;
-    private okBtnRef?: ButtonComponent;
+    /** Reference to search button */
+    private searchBtnRef?: ButtonComponent;
+    /** Location search string */
     private query?: string;
+    /**
+     * RunTimeSettings object used to track settings accross Modals,
+     * in addition to saved plugin settings. e.g. used to track query string
+     * between SearchLocationModal and SearchResultsModal
+     */
     private rtSettings: RuntimeSettings;
     
     constructor(
@@ -25,8 +36,12 @@ export class SearchLocationModal extends Modal {
         this.query = this.rtSettings.queryText;
     }
 
-    // Search API for locations
-    private async searchNominatimFreeform(searchText: string): Promise<any> {
+    /**
+     * 
+     * @param {string} searchText - Freeform Nominatim API style query string
+     * @returns {Promise<any[]>} Promise of an Array of OSM locations
+     */
+    private async searchNominatimFreeform(searchText: string): Promise<any[]> {
         const url = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(searchText) + "&format=json";
 
         try {
@@ -35,18 +50,25 @@ export class SearchLocationModal extends Modal {
                 throw new Error(`Response status: ${response.status}`);
             }
 
-            const results = await response.json();
+            const results: Array<any> = await response.json() as Array<any>;
             return results;
         }
         catch (error) {
-            console.warn('failed to get results of search', error);
-            return null;
+            const emptyArray: Array<any> = new Array;
+            console.warn('Failed to get results of search', error);
+            return emptyArray;
         }
     }
 
+    //To-Do implement advanced search
+
+    /**
+     * Change button text based if search is occuring (busy) or not (not busy)
+     * @param {boolean} busy - Boolean designating if busy (i.e. search occuring)
+     */
     setBusy(busy: boolean): void {
         this.isBusy = busy;
-        this.okBtnRef?.setDisabled(busy).setButtonText(busy ? this.SEARCHING_BUTTON_TEXT : this.SEARCH_BUTTON_TEXT);
+        this.searchBtnRef?.setDisabled(busy).setButtonText(busy ? this.SEARCHING_BUTTON_TEXT : this.SEARCH_BUTTON_TEXT);
     }
 
     // Returns all available suggestions.
@@ -83,7 +105,7 @@ export class SearchLocationModal extends Modal {
                 .inputEl.addEventListener('keydown', event => event.key === 'Enter' && !event.isComposing && this.getLocations()));
 
         new Setting(this.contentEl).addButton(btn => {
-            this.okBtnRef = btn
+            this.searchBtnRef = btn
                 .setButtonText(this.SEARCH_BUTTON_TEXT)
                 .setCta()
                 .onClick(() => this.getLocations());

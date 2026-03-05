@@ -16,7 +16,7 @@ export interface LocationAddSettings {
 }
 
 /**
- * A constant dictionary with default LocationAddSettings
+ * A dictionary with default LocationAddSettings
  * @public
  */
 export const DEFAULT_SETTINGS: LocationAddSettings = {

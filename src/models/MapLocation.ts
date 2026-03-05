@@ -1,5 +1,5 @@
 export interface MapLocation {
-    addresstypei?: string;
+    addresstype?: string;
     boundingbox?: string[];
     class?: string;
     display_name: string;

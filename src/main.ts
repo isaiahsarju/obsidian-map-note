@@ -71,7 +71,7 @@ export default class LocationAddPlugin extends Plugin {
 	/**
 	 * Open modal to search for a location
 	 * @param {RuntimeSettings} rtSettings - Settings that are shared between modals (e.g. Search query string)
-	 * @returns {PromiseLike<MapLocation[]>}
+	 * @returns {Promise<MapLocation[]>}
 	 */
 	async openSearchLocationModal(rtSettings: RuntimeSettings): Promise<MapLocation[]>{
 		return new Promise((resolve, reject) => {
@@ -86,7 +86,7 @@ export default class LocationAddPlugin extends Plugin {
 	 * Open modal to select correct location
 	 * @param {MapLocation[]} mapLocations - Array of MapLocations
 	 * @param rtSettings - Settings that are shared between modals (e.g. Search query string)
-	 * @returns {PromiseLike<MapLocation>}
+	 * @returns {Promise<MapLocation>}
 	 */
 	async openSearchResultsModal(mapLocations: MapLocation[], rtSettings: RuntimeSettings): Promise<MapLocation>{
 		return new Promise((resolve, reject) => {
@@ -102,7 +102,7 @@ export default class LocationAddPlugin extends Plugin {
 	 * Sets a RuntimeSettings object to pass to results modal to pre-fill text.
 	 * Opens SearchLocationModal and then opens SearchResultsModal with the found locations.
 	 * @param {string} query - string used to search for location
-	 * @returns {PromiseLike<MapLocation} a MapLocation
+	 * @returns {Promise<MapLocation} a MapLocation
 	 */
 	async selectCorrectLocation(query?: string): Promise<MapLocation>{
 		// Create RuntimeSettings object to hold query text
@@ -130,14 +130,41 @@ export default class LocationAddPlugin extends Plugin {
 			// Set icons and colors inside of MapLocation Object
 			// The dictionary of icon and color associations (ica)
             const icaDict = this.settings.icaDict;
+
+			// Use Type or Class to resolve icon. Try type first
 			const mapLocationType = mapLocation.type;
+			const mapLocationClass = mapLocation.class;
+			const mapLocationAddrType = mapLocation.addresstype;
 
 			// If the icaDict has any definitions and mapLocationType is defined
 			// then we can lookup icons and colors based on the type.
 			// These associations are defined under the settings
-            if (icaDict !== undefined && mapLocationType !== undefined){
-				const icaIcon = icaDict[mapLocationType]?.icon;
-				const icaColor = icaDict[mapLocationType]?.color;
+            if (icaDict !== undefined && (mapLocationType !== undefined || mapLocationClass !== undefined || mapLocationAddrType !== undefined)){
+				// If mapLocationType doesn't provide an icon/color, lookup with mapLocationClass.
+				// E.g. for Willis Tower in Chicago, the  location's type is 'commercial'
+				// and that doesn't resolve an icon|color then try to lookup up with
+				// the class of the location which is 'building'
+				// As a last resort look at the address type
+				let icaIcon: string | undefined;
+				let icaColor: string | undefined;
+				if (mapLocationType !== undefined &&
+						(icaDict[mapLocationType]?.icon !== undefined || icaDict[mapLocationType]?.color !== undefined )){
+					console.log("Resolving icon/color with map location's 'type'");
+					icaIcon = icaDict[mapLocationType].icon;
+					icaColor = icaDict[mapLocationType].color;
+				} else if (mapLocationClass !== undefined &&
+						(icaDict[mapLocationClass]?.icon !== undefined || icaDict[mapLocationClass]?.color !== undefined )) {
+					console.warn("Resolving icon/color with map location's 'class'");
+					icaIcon = icaDict[mapLocationClass].icon;
+					icaColor = icaDict[mapLocationClass].color;
+				} else if (mapLocationAddrType !== undefined &&
+						(icaDict[mapLocationAddrType]?.icon !== undefined || icaDict[mapLocationAddrType]?.color !== undefined )) {
+					console.warn("Resolving icon/color with map location's 'addresstype'");
+					icaIcon = icaDict[mapLocationAddrType].icon;
+					icaColor = icaDict[mapLocationAddrType].color;
+				} else {
+					console.error("No type, class, or addresstype resolved");
+				}
 				if (icaIcon) mapLocation.lucide_icon = icaIcon;
 				if (icaColor) mapLocation.color = icaColor;
             }
