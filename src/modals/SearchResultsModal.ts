@@ -1,5 +1,4 @@
-import type { ButtonComponent, ISuggestOwner } from 'obsidian';
-import { App, SuggestModal, Modal, Notice, Setting} from 'obsidian';
+import { App, SuggestModal, Notice} from 'obsidian';
 import type LocationAddPlugin from "../main";
 import { MapLocation } from '../models/MapLocation';
 import { RuntimeSettings } from 'models/RuntimeSettings';
@@ -76,7 +75,6 @@ export class SearchResultsModal extends SuggestModal<MapLocation> {
      * @inheritdoc {SuggestModal.onOpen}
      */
     onOpen() {
-        let {contentEl} = this;
         // current hack from https://forum.obsidian.md/t/initial-query-for-suggestmodal/62872
         // to get it to display all options until text is input into the suggest modal
         if (this.initialQuery) {

@@ -1,8 +1,8 @@
-import { App, Notice, Plugin, normalizePath, TFile} from 'obsidian';
+import { Notice, Plugin, normalizePath} from 'obsidian';
 import { DEFAULT_SETTINGS, LocationAddSettings, LocationAddTab } from './settings/settings';
 import { SearchLocationModal } from 'modals/SearchLocationModal';
 import { SearchResultsModal } from 'modals/SearchResultsModal';
-import { AddCurrentLocationModal } from 'modals/AddCurrentLocationModal'; // To-Do Allow a user to create a location based on the GPS of their device
+//import { AddCurrentLocationModal } from 'modals/AddCurrentLocationModal'; // To-Do Allow a user to create a location based on the GPS of their device
 import { MapLocation } from 'models/MapLocation';
 import { RuntimeSettings } from 'models/RuntimeSettings';
 import { replacePlaceHolders } from 'utils/utils'
@@ -23,7 +23,7 @@ export default class LocationAddPlugin extends Plugin {
 
 		// Creates an icon in the left ribbon.
 		// To-Do: add setting to disable this
-		this.addRibbonIcon('map-pin-plus', 'New Location', () =>  this.createNewLocationNote())
+		this.addRibbonIcon('map-pin-plus', 'New location', () =>  this.createNewLocationNote())
 
 		// Adds a new location by calling OSM API,
 		// resolving location data, and filling out a template
@@ -118,7 +118,7 @@ export default class LocationAddPlugin extends Plugin {
 		try {
 			// Get correct Locaiton
 			const mapLocation = await this.selectCorrectLocation();
-			console.info(`Selected name: ${mapLocation.name}\ndisplay_name: ${mapLocation.display_name}\ntype: ${mapLocation.type}`);
+			console.debug("Selected name: " );
 			console.debug(mapLocation);
 
 			// Make new note from location
@@ -149,21 +149,21 @@ export default class LocationAddPlugin extends Plugin {
 				let icaColor: string | undefined;
 				if (mapLocationType !== undefined &&
 						(icaDict[mapLocationType]?.icon !== undefined || icaDict[mapLocationType]?.color !== undefined )){
-					console.log("Resolving icon/color with map location's 'type'");
+					console.debug("Resolving icon/color with map location's 'type'");
 					icaIcon = icaDict[mapLocationType].icon;
 					icaColor = icaDict[mapLocationType].color;
 				} else if (mapLocationClass !== undefined &&
 						(icaDict[mapLocationClass]?.icon !== undefined || icaDict[mapLocationClass]?.color !== undefined )) {
-					console.warn("Resolving icon/color with map location's 'class'");
+					console.debug("Resolving icon/color with map location's 'class'");
 					icaIcon = icaDict[mapLocationClass].icon;
 					icaColor = icaDict[mapLocationClass].color;
 				} else if (mapLocationAddrType !== undefined &&
 						(icaDict[mapLocationAddrType]?.icon !== undefined || icaDict[mapLocationAddrType]?.color !== undefined )) {
-					console.warn("Resolving icon/color with map location's 'addresstype'");
+					console.debug("Resolving icon/color with map location's 'addresstype'");
 					icaIcon = icaDict[mapLocationAddrType].icon;
 					icaColor = icaDict[mapLocationAddrType].color;
 				} else {
-					console.error("No type, class, or addresstype resolved");
+					console.error("Icon and color undefined. No type, class, or addresstype resolved");
 				}
 				if (icaIcon) mapLocation.lucide_icon = icaIcon;
 				if (icaColor) mapLocation.color = icaColor;
@@ -195,7 +195,7 @@ export default class LocationAddPlugin extends Plugin {
 		} catch (error){
 			// https://www.youtube.com/watch?v=JuYeHPFR3f0
 			console.warn(error);
-			new Notice(`${error}`);
+			new Notice(`${error as string}`);
 		}
 	}
 

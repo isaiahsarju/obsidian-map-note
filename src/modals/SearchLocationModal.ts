@@ -1,9 +1,8 @@
 import type { ButtonComponent } from 'obsidian';
-import { App, Modal, Notice, Setting} from 'obsidian';
+import { App, Modal, Notice, requestUrl, Setting} from 'obsidian';
 import LocationAddPlugin from "../main";
 import { MapLocation } from 'models/MapLocation';
 import { RuntimeSettings } from 'models/RuntimeSettings';
-import { assert } from 'console';
 
 /**
  * A Modal used to search for desired OSM location
@@ -39,24 +38,24 @@ export class SearchLocationModal extends Modal {
     /**
      * 
      * @param {string} searchText - Freeform Nominatim API freeform style query string
-     * @returns {Promise<any[]>} Promise of an Array of OSM locations
+     * @returns {Promise<object[]>} Promise of an Array of OSM locations
      */
-    private async searchNominatimFreeform(searchText: string): Promise<any[]> {
-        const url = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(searchText) + "&format=json";
+    private async searchNominatimFreeform(searchText: string): Promise<object[]> {
+        const url: string = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(searchText) + "&format=json";
         
         // Peform Freeform search
         try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Response status: ${response.status}`);
+            const response = await requestUrl(url);
+            if (response.status !== 200) {
+                throw new Error(`Response status (${response.status}): ${response.text}`);
             }
 
-            const results: Array<any> = await response.json() as Array<any>;
+            const results: Array<object> = (response.json as object[]);
             return results;
         }
         // Catch errors
         catch (error) {
-            const emptyArray: Array<any> = new Array;
+            const emptyArray: Array<object> = new Array<object>;
             console.warn('Failed to get results of search', error);
             return emptyArray;
         }
@@ -102,18 +101,27 @@ export class SearchLocationModal extends Modal {
      * @inheritdoc {Modal.onOpen}
      */
     onOpen() {
-        let {contentEl} = this;
         // Search box
         new Setting(this.contentEl)
             .setName('Search')
             .addText((text) =>
                 text
-                .setPlaceholder("e.g. Cloud Gate Chicago")
+                .setPlaceholder("Cloud gate chicago")
                 .onChange((value) => {
                 this.query = value;
                 this.rtSettings.queryText = this.query;
                 })
-                .inputEl.addEventListener('keydown', event => event.key === 'Enter' && !event.isComposing && this.getLocations()));
+                .inputEl.addEventListener('keydown', (event): void => {
+                    if(event.key === 'Enter' && !event.isComposing){
+                        //IIFE https://developer.mozilla.org/en-US/docs/Glossary/IIFE
+                        // to resolve "Promise returned in function argument where a void return was expected" lint error
+                        (() =>{
+                            void this.getLocations().catch(console.warn);
+                        })();
+                    }
+                })
+            )
+                //.inputEl.addEventListener('keydown', event => event.key === 'Enter' && !event.isComposing && this.getLocations()));
         // Search button
         new Setting(this.contentEl).addButton(btn => {
             this.searchBtnRef = btn

@@ -1,5 +1,5 @@
 import type { ButtonComponent } from 'obsidian';
-import { App, Modal, Notice, Setting, TextComponent} from 'obsidian';
+import { App, Modal, Notice} from 'obsidian';
 import type LocationAddPlugin from "../main";
 
 /**
@@ -24,7 +24,6 @@ export class AddCurrentLocationModal extends Modal {
 	 */
 	onOpen() {
 		// Maybe gets GPS and then peforms OSM search to try and resolve an addr?
-		let {contentEl} = this;
 		new Notice('Not yet implemented');
         this.close();
 	}

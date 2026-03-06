@@ -8,14 +8,15 @@ import { MapLocation } from "models/MapLocation";
  * @returns - string with replacements
  */
 export function replacePlaceHolders(mapLocation: MapLocation, text: string): string{
+    type ValidType = string | number | string[];
     /**
      * Takes a MapLocation and key (e.g. type, lat or lon) and returns MapLocation[property]
      * @param mapLocation - a MapLocation object
      * @param key - key in MapLocation object
      * @returns - property in MapLocation at specified key
      */
-    function getProperty<MapLocation, K extends keyof MapLocation>(mapLocation: MapLocation, key: K): any{
-        return mapLocation[key];
+    function getProperty<MapLocation, K extends keyof MapLocation>(mapLocation: MapLocation, key: K): ValidType{
+        return mapLocation[key] as ValidType;
     }
 
     /**
@@ -26,7 +27,7 @@ export function replacePlaceHolders(mapLocation: MapLocation, text: string): str
      */
     function lookupReplacement (match: string, mapLocation: MapLocation): string{
         const cleanString = match.replace(/\{|\}/g,'');
-        return getProperty(mapLocation, cleanString as keyof MapLocation);
+        return getProperty(mapLocation, cleanString as keyof MapLocation) as string;
     }
     
     return text.replace(/\{\{.*\}\}/g,(match) => lookupReplacement(match, mapLocation))

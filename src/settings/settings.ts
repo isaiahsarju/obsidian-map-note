@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, ButtonComponent, TextComponent, ColorComponent, Notice, addIcon, setIcon} from "obsidian";
+import { App, PluginSettingTab, Setting, ButtonComponent, TextComponent, ColorComponent, Notice } from "obsidian";
 import type LocationAddPlugin from "../main";
 import { IconColorAssociation } from "../models/IconColorAssociation"
 
@@ -73,10 +73,10 @@ export class LocationAddTab extends PluginSettingTab {
 		// To-Do make this a searchable drop down
 		new Setting(containerEl)
 			.setName('Path to template file')
-			.setDesc('See README docs for example template file')
+			.setDesc('See docs for example template file')
 			.addText((text) =>
 				text
-				.setPlaceholder('path/to/template/file')
+				.setPlaceholder('Template file path')
 				.setValue(settings.templatePath)
 				.onChange(async (value) => {
 					settings.templatePath = value;
@@ -85,14 +85,14 @@ export class LocationAddTab extends PluginSettingTab {
 		
 		// Description for toggle of using/not using associations
 		const icDesc = document.createDocumentFragment();
-		icDesc.appendText('Use custom associations for ');  
+		icDesc.appendText('Use custom associations for');  
 		icDesc.createEl('a', {  
-				text: 'icons',  
+				text: 'Icons',  
 				attr: { href: 'https://lucide.dev/icons/', target: '_blank' }  
 			});
 		icDesc.appendText(' and ');
 		icDesc.createEl('a', {  
-				text: 'colors',  
+				text: 'Colors',  
 				attr: { href: 'https://en.wikipedia.org/wiki/Web_colors', target: '_blank' }  
 			});
 
@@ -122,7 +122,7 @@ export class LocationAddTab extends PluginSettingTab {
 		icAssociation.addText((text) =>{
 			this.icaType = text;
 			text
-				.setPlaceholder("type: e.g. landmark")
+				.setPlaceholder("Example: park")
 				.setDisabled(!settings.iconColorLookup)
 				.onChange((value) =>
 					{
@@ -136,7 +136,7 @@ export class LocationAddTab extends PluginSettingTab {
 		icAssociation.addText((text) => {
 			this.icaIcon = text;
 			text
-				.setPlaceholder("icon: e.g. tree")
+				.setPlaceholder("Example: shrub")
 				.onChange((value) => {this.strIcon = value;})
 				.setDisabled(!settings.iconColorLookup);
 			});
@@ -180,22 +180,22 @@ export class LocationAddTab extends PluginSettingTab {
 		// add listing for each item in the dictionary
 		for (let K in settings.icaDict){
 			if (K === undefined) return;
-			let icaIconColor = settings.icaDict[K];
+			let icAssociation = settings.icaDict[K];
 			const icaSetting = new Setting(containerEl);
 			icaSetting.setName(K)
 			// Show assigned color
-			if (icaIconColor?.color){
-				const setColor = icaIconColor.color;
+			if (icAssociation?.color){
+				const setColor = icAssociation.color;
 				icaSetting.addColorPicker((color) => {
 					color
 					.setDisabled(true)
 					.setValue(setColor);
 			})};
 
-			if (icaIconColor?.icon){
-				const setIcon = icaIconColor.icon;
+			if (icAssociation?.icon){
+				const setIcon = icAssociation.icon;
 				icaSetting.addExtraButton((button) => {
-					button.setIcon(setIcon).setDisabled;
+					button.setIcon(setIcon).setDisabled(true);
 				})
 			}
 
