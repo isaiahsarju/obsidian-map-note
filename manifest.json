@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-map-note",
 	"name": "Obsidian Map Note",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"minAppVersion": "1.10.0",
 	"description": "Create a note that can be displayed using the Obsidian Bases Map View",
 	"author": "Isaiah Sarju",
