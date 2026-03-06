@@ -1,9 +1,9 @@
 {
 	"id": "map-note",
 	"name": "Map Note",
-	"version": "0.1.6",
+	"version": "0.1.7",
 	"minAppVersion": "1.10.0",
-	"description": "Add location notes that the Bases Map view will render",
+	"description": "Add location notes that the Bases Map view will render.",
 	"author": "Isaiah Sarju",
 	"authorUrl": "https://github.com/isaiahsarju/",
 	"fundingUrl": {
