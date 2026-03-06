@@ -1,6 +1,8 @@
 [![Node.js build](https://github.com/isaiahsarju/obsidian-map-note/actions/workflows/lint.yml/badge.svg)](https://github.com/isaiahsarju/obsidian-map-note/actions/workflows/lint.yml)
 
 Requires [Obsidian 1.10](https://obsidian.md/changelog/2025-11-11-desktop-v1.10.3/). This project creates notes with the necessary properties to be rendered by the the [Obsidian Bases Map view](https://github.com/obsidianmd/obsidian-maps).
+# Install
+Use [BRAT](https://github.com/TfTHacker/obsidian42-brat) plugin while this is in beta.
 # Example Templates
 You will need to specify a path to your template. To create a new note the plugin will fill in the template with values from OpenStreetMaps.
 ## Simple - Bare minimum, coordinates as list
