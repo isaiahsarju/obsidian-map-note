@@ -1,4 +1,6 @@
-[![Node.js build](https://github.com/isaiahsarju/obsidian-map-note/actions/workflows/lint.yml/badge.svg)](https://github.com/isaiahsarju/obsidian-map-note/actions/workflows/lint.yml)
+[![Node.js build](https://github.com/isaiahsarju/map-note/actions/workflows/lint.yml/badge.svg)](https://github.com/isaiahsarju/map-note/actions/workflows/lint.yml)
+![GitHub Downloads (specific asset, all releases)](https://img.shields.io/github/downloads/isaiahsarju/map-note/main.js)
+
 
 Requires [Obsidian 1.10](https://obsidian.md/changelog/2025-11-11-desktop-v1.10.3/). This project creates notes with the necessary properties to be rendered by the the [Obsidian Bases Map view](https://github.com/obsidianmd/obsidian-maps).
 # Install
@@ -82,4 +84,4 @@ Limited use of LLMs during development. Reserved for synthesizing search results
 
 If committing to this project please indicate in code comments when and where LLMs or "AI" was used.
 # Greetz
-Chunks code plagiarized from [anpigon's book search plugin](https://github.com/anpigon/obsidian-book-search-plugin/), using my mind's artificial intelligence
+Chunks of code plagiarized from [anpigon's book search plugin](https://github.com/anpigon/obsidian-book-search-plugin/), using my mind's artificial intelligence
