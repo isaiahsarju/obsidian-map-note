@@ -1,6 +1,5 @@
 [![Node.js build](https://github.com/isaiahsarju/map-note/actions/workflows/lint.yml/badge.svg)](https://github.com/isaiahsarju/map-note/actions/workflows/lint.yml)
-![GitHub Downloads (specific asset, all releases)](https://img.shields.io/github/downloads/isaiahsarju/map-note/main.js)
-![Obsidian Downloads](https://img.shields.io/badge/?label=Obsidian%20Downloads:&logo=obsidian&color=8c79de&logoColor=8c79de)
+![GitHub Downloads (specific asset, all releases)](https://img.shields.io/github/downloads/isaiahsarju/map-note/main.js?label=Downloads:&logo=obsidian&color=8c79de&logoColor=8c79de)
 
 
 Requires [Obsidian 1.10](https://obsidian.md/changelog/2025-11-11-desktop-v1.10.3/). This project creates notes with the necessary properties to be rendered by the the [Obsidian Bases Map view](https://github.com/obsidianmd/obsidian-maps).
