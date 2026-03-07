@@ -202,7 +202,8 @@ export default class LocationAddPlugin extends Plugin {
 	/**
 	 * Prepends location data to the current note based on template
 	 */
-	async addLocationData(): Promise<void>{
+	addLocationData(): void {
+	//async addLocationData(): Promise<void>{
 		// To-do: add insertMetadata like function from https://github.com/anpigon/obsidian-book-search-plugin/blob/master/src/main.ts#L141
 		const strWarn = 'addLocationData() not yet implemented'
 		console.warn(strWarn);
@@ -212,7 +213,8 @@ export default class LocationAddPlugin extends Plugin {
 	/**
 	 * Creates new location note based on current GPS coordinates
 	 */
-	async addCurrentLocation(): Promise<void>{
+	addCurrentLocation(): void {
+	//async addCurrentLocation(): Promise<void>{
 		const strWarn = 'addCurrentLocation() not yet implemented'
 		console.warn(strWarn);
 		new Notice(`${strWarn}`);
