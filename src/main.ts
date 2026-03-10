@@ -1,4 +1,4 @@
-import { Notice, Plugin, TFile, normalizePath} from 'obsidian';
+import { Notice, Plugin, TFile, normalizePath, apiVersion} from 'obsidian';
 import { DEFAULT_SETTINGS, LocationAddSettings, LocationAddTab } from './settings/settings';
 import { SearchLocationModal } from 'modals/SearchLocationModal';
 import { SearchResultsModal } from 'modals/SearchResultsModal';
@@ -20,6 +20,7 @@ export default class LocationAddPlugin extends Plugin {
 	 */
 	async onload() {
 		await this.loadSettings();
+		console.log(apiVersion);
 
 		// Creates an icon in the left ribbon.
 		// To-Do: add setting to disable this
