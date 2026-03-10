@@ -1,4 +1,4 @@
-import { Notice, Plugin, TFile, normalizePath} from 'obsidian';
+import { Notice, Plugin, normalizePath} from 'obsidian';
 import { DEFAULT_SETTINGS, LocationAddSettings, LocationAddTab } from './settings/settings';
 import { SearchLocationModal } from 'modals/SearchLocationModal';
 import { SearchResultsModal } from 'modals/SearchResultsModal';
@@ -124,8 +124,7 @@ export default class LocationAddPlugin extends Plugin {
 			// Make new note from location
 			const fileName = normalizePath((mapLocation.name ? mapLocation.name : mapLocation.display_name) + '.md');
 			const templatePath = normalizePath(this.settings.templatePath + '.md');
-			const tFile: TFile | null = this.app.vault.getFileByPath(templatePath);
-		
+			const templateFile = vault.getFileByPath(templatePath);
 			let fileContents = '';
 
 			// Set Icon and Color properties of MapLocation object
@@ -135,16 +134,16 @@ export default class LocationAddPlugin extends Plugin {
 			// the first one
 			
 			// Only create a new file if template is defined
-			if (tFile !== null) {
+			if (templateFile) {
 				// Read and fill out templated text
-				const fileTemplateText = await vault.read(tFile);
+				const fileTemplateText = await vault.read(templateFile);
 				fileContents = replacePlaceHolders(mapLocation, fileTemplateText);
 			} else {
 				// If no template file found: throw an error
 				throw new Error(`Template file not found: ${templatePath}`)
 			}
 			const targetFile = await this.app.vault.create(fileName, fileContents);
-
+			
 			// Get active leaf and open created note
 			const activeLeaf = this.app.workspace.getLeaf();
 			if (!activeLeaf) {
