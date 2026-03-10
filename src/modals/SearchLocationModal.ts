@@ -1,5 +1,5 @@
 import type { ButtonComponent } from 'obsidian';
-import { App, Modal, Notice, requestUrl, RequestUrlParam, Setting} from 'obsidian';
+import { App, Modal, Notice, requestUrl, RequestUrlParam, Setting, apiVersion} from 'obsidian';
 import LocationAddPlugin from "../main";
 import { MapLocation } from 'models/MapLocation';
 import { RuntimeSettings } from 'models/RuntimeSettings';
@@ -45,7 +45,7 @@ export class SearchLocationModal extends Modal {
         const url: string = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(searchText) + "&format=json";
         // Headers
         // User-Agent or Referer required for Nominatim use
-        const headers: Record<string, string> = {"Accept": "applicaiton/json", "User-Agent": navigator.userAgent};
+        const headers: Record<string, string> = {"Accept": "applicaiton/json", "User-Agent": 'obsidian-api/'+apiVersion};
         // Obsidian style RequestUrlParam
         // Set throw to false so we can see complete error from Nominatim
         const rupNominatim: RequestUrlParam = {url: url, method:"GET", headers: headers, throw: false};
