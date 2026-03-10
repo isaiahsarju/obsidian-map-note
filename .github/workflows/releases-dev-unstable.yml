@@ -1,10 +1,8 @@
-name: Release Obsidian plugin
+name: Release Obsidian dev-unstable plugin
 
 on:
-  push:
-    tags:
-      - "*"
-      - "!dev-stable"
+    push:
+        branches: [dev-unstable]
 
 jobs:
   build:
@@ -24,11 +22,11 @@ jobs:
           npm install
           npm run build
 
-      - name: Create release
+      - name: Createdev-unstable release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          tag="${GITHUB_REF#refs/tags/}"
+          tag="dev-unstable"
 
           gh release create "$tag" \
             --title="$tag" \

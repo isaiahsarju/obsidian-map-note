@@ -1,5 +1,5 @@
 import type { ButtonComponent } from 'obsidian';
-import { App, Modal, Notice, requestUrl, Setting} from 'obsidian';
+import { App, Modal, Notice, requestUrl, RequestUrlParam, Setting, apiVersion} from 'obsidian';
 import LocationAddPlugin from "../main";
 import { MapLocation } from 'models/MapLocation';
 import { RuntimeSettings } from 'models/RuntimeSettings';
@@ -41,11 +41,18 @@ export class SearchLocationModal extends Modal {
      * @returns {Promise<object[]>} Promise of an Array of OSM locations
      */
     private async searchNominatimFreeform(searchText: string): Promise<object[]> {
+        // Freeform search query
         const url: string = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(searchText) + "&format=json";
+        // Headers
+        // User-Agent or Referer required for Nominatim use
+        const headers: Record<string, string> = {"Accept": "applicaiton/json", "User-Agent": 'obsidian-api/'+apiVersion};
+        // Obsidian style RequestUrlParam
+        // Set throw to false so we can see complete error from Nominatim
+        const rupNominatim: RequestUrlParam = {url: url, method:"GET", headers: headers, throw: false};
         
-        // Peform Freeform search
+        // Perform Freeform search
         try {
-            const response = await requestUrl(url);
+            const response = await requestUrl(rupNominatim);
             if (response.status !== 200) {
                 throw new Error(`Response status (${response.status}): ${response.text}`);
             }

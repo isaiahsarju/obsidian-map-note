@@ -1,10 +1,11 @@
 import { MapLocation } from "models/MapLocation";
+import { IconColorAssociation } from "models/IconColorAssociation";
 
 /**
  * Takes a MapLocation object, and template text with placeholders of {{[property]}}
  * and returns string with replaced properties found in MapLocation
- * @param mapLocation - a MapLocation object
- * @param text - template text with {{}} surrounding desired property names for replacments
+ * @param {MapLocation} mapLocation - a MapLocation object
+ * @param {string} text - template text with {{}} surrounding desired property names for replacments
  * @returns - string with replacements
  */
 export function replacePlaceHolders(mapLocation: MapLocation, text: string): string{
@@ -31,4 +32,59 @@ export function replacePlaceHolders(mapLocation: MapLocation, text: string): str
     }
     
     return text.replace(/\{\{.*\}\}/g,(match) => lookupReplacement(match, mapLocation))
+}
+
+/**
+ * Set icon and colors, based on icon/color association settings, of a MapLocation
+ * @param {MapLocation} mapLocation - A MapLocation Object
+ * @param {{[id: string] : IconColorAssociation}} icaDict - Dictionary of Icon and Color associations associated with the string a MapLocation type || class || or address type
+ */
+export function associateIconsColors(mapLocation: MapLocation, icaDict: {[id: string] : IconColorAssociation}): void {
+    // Use Type or Class to resolve icon. Try type first
+    const mapLocationType = mapLocation.type;
+    const mapLocationClass = mapLocation.class;
+    const mapLocationAddrType = mapLocation.addresstype;
+
+    // If the icaDict has any definitions and mapLocationType is defined
+    // then we can lookup icons and colors based on the type.
+    // These associations are defined under the settings
+    if (icaDict !== undefined && (mapLocationType !== undefined || mapLocationClass !== undefined || mapLocationAddrType !== undefined)){
+        // If mapLocationType doesn't provide an icon/color, lookup with mapLocationClass.
+        // E.g. for Willis Tower in Chicago, the  location's type is 'commercial'
+        // and that doesn't resolve an icon|color then try to lookup up with
+        // the class of the location which is 'building'
+        // As a last resort look at the address type
+        let icaIcon: string | undefined;
+        let icaColor: string | undefined;
+        if (mapLocationType !== undefined &&
+                (icaDict[mapLocationType]?.icon !== undefined || icaDict[mapLocationType]?.color !== undefined )){
+            console.debug("Resolving icon/color with map location's 'type'");
+            icaIcon = icaDict[mapLocationType].icon;
+            icaColor = icaDict[mapLocationType].color;
+        } else if (mapLocationClass !== undefined &&
+                (icaDict[mapLocationClass]?.icon !== undefined || icaDict[mapLocationClass]?.color !== undefined )) {
+            console.debug("Resolving icon/color with map location's 'class'");
+            icaIcon = icaDict[mapLocationClass].icon;
+            icaColor = icaDict[mapLocationClass].color;
+        } else if (mapLocationAddrType !== undefined &&
+                (icaDict[mapLocationAddrType]?.icon !== undefined || icaDict[mapLocationAddrType]?.color !== undefined )) {
+            console.debug("Resolving icon/color with map location's 'addresstype'");
+            icaIcon = icaDict[mapLocationAddrType].icon;
+            icaColor = icaDict[mapLocationAddrType].color;
+        } else {
+            console.error("Icon and color undefined. No type, class, or addresstype resolved");
+        }
+        // If icons/colors are not null and are defined update mapLocation properties, else set themt to empty strings
+        if (icaIcon && icaIcon !== undefined) {
+            mapLocation.lucide_icon = icaIcon
+        } else {
+            mapLocation.lucide_icon="";
+        }
+
+        if (icaColor && icaColor !== undefined) {
+            mapLocation.color = icaColor;
+        } else {
+             mapLocation.color="";
+        }
+    }
 }

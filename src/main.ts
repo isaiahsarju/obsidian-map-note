@@ -5,7 +5,7 @@ import { SearchResultsModal } from 'modals/SearchResultsModal';
 //import { AddCurrentLocationModal } from 'modals/AddCurrentLocationModal'; // To-Do Allow a user to create a location based on the GPS of their device
 import { MapLocation } from 'models/MapLocation';
 import { RuntimeSettings } from 'models/RuntimeSettings';
-import { replacePlaceHolders } from 'utils/utils'
+import { associateIconsColors, replacePlaceHolders } from 'utils/utils'
 
 /**
  * LocationAddPlugin that provides methods to
@@ -102,7 +102,7 @@ export default class LocationAddPlugin extends Plugin {
 	 * Sets a RuntimeSettings object to pass to results modal to pre-fill text.
 	 * Opens SearchLocationModal and then opens SearchResultsModal with the found locations.
 	 * @param {string} query - string used to search for location
-	 * @returns {Promise<MapLocation} a MapLocation
+	 * @returns {Promise<MapLocation>} a MapLocation
 	 */
 	async selectCorrectLocation(query?: string): Promise<MapLocation>{
 		// Create RuntimeSettings object to hold query text
@@ -118,56 +118,17 @@ export default class LocationAddPlugin extends Plugin {
 		try {
 			// Get correct Locaiton
 			const mapLocation = await this.selectCorrectLocation();
-			console.debug("Selected name: " );
+			console.debug("Selected location object: " );
 			console.debug(mapLocation);
 
 			// Make new note from location
-			const fileName = (mapLocation.name ? mapLocation.name : mapLocation.display_name) + '.md';
-			const templatePath = normalizePath(this.settings.templatePath) + '.md';
+			const fileName = normalizePath((mapLocation.name ? mapLocation.name : mapLocation.display_name) + '.md');
+			const templatePath = normalizePath(this.settings.templatePath + '.md');
 			const templateFile = vault.getFileByPath(templatePath);
 			let fileContents = '';
 
-			// Set icons and colors inside of MapLocation Object
-			// The dictionary of icon and color associations (ica)
-            const icaDict = this.settings.icaDict;
-
-			// Use Type or Class to resolve icon. Try type first
-			const mapLocationType = mapLocation.type;
-			const mapLocationClass = mapLocation.class;
-			const mapLocationAddrType = mapLocation.addresstype;
-
-			// If the icaDict has any definitions and mapLocationType is defined
-			// then we can lookup icons and colors based on the type.
-			// These associations are defined under the settings
-            if (icaDict !== undefined && (mapLocationType !== undefined || mapLocationClass !== undefined || mapLocationAddrType !== undefined)){
-				// If mapLocationType doesn't provide an icon/color, lookup with mapLocationClass.
-				// E.g. for Willis Tower in Chicago, the  location's type is 'commercial'
-				// and that doesn't resolve an icon|color then try to lookup up with
-				// the class of the location which is 'building'
-				// As a last resort look at the address type
-				let icaIcon: string | undefined;
-				let icaColor: string | undefined;
-				if (mapLocationType !== undefined &&
-						(icaDict[mapLocationType]?.icon !== undefined || icaDict[mapLocationType]?.color !== undefined )){
-					console.debug("Resolving icon/color with map location's 'type'");
-					icaIcon = icaDict[mapLocationType].icon;
-					icaColor = icaDict[mapLocationType].color;
-				} else if (mapLocationClass !== undefined &&
-						(icaDict[mapLocationClass]?.icon !== undefined || icaDict[mapLocationClass]?.color !== undefined )) {
-					console.debug("Resolving icon/color with map location's 'class'");
-					icaIcon = icaDict[mapLocationClass].icon;
-					icaColor = icaDict[mapLocationClass].color;
-				} else if (mapLocationAddrType !== undefined &&
-						(icaDict[mapLocationAddrType]?.icon !== undefined || icaDict[mapLocationAddrType]?.color !== undefined )) {
-					console.debug("Resolving icon/color with map location's 'addresstype'");
-					icaIcon = icaDict[mapLocationAddrType].icon;
-					icaColor = icaDict[mapLocationAddrType].color;
-				} else {
-					console.error("Icon and color undefined. No type, class, or addresstype resolved");
-				}
-				if (icaIcon) mapLocation.lucide_icon = icaIcon;
-				if (icaColor) mapLocation.color = icaColor;
-            }
+			// Set Icon and Color properties of MapLocation object
+			associateIconsColors( mapLocation, this.settings.icaDict);
 
 			// To-Do, add setting for looking up lucide icons based on type and selecting
 			// the first one
