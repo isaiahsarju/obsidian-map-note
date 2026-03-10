@@ -44,8 +44,10 @@ export class SearchLocationModal extends Modal {
         // Freeform search query
         const url: string = "https://nominatim.openstreetmap.org/search?q=" + encodeURIComponent(searchText) + "&format=json";
         // Headers
-        const headers: Record<string, string> = {"Accept": "applicaiton/json"};
+        // User-Agent or Referer required for Nominatim use
+        const headers: Record<string, string> = {"Accept": "applicaiton/json", "User-Agent": navigator.userAgent};
         // Obsidian style RequestUrlParam
+        // Set throw to false so we can see complete error from Nominatim
         const rupNominatim: RequestUrlParam = {url: url, method:"GET", headers: headers, throw: false};
         
         // Perform Freeform search
