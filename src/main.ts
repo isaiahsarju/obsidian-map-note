@@ -35,19 +35,21 @@ export default class LocationAddPlugin extends Plugin {
 
 		// Adds location data to a current note, pre-filling search
 		// with the name of the note
+		/*
 		this.addCommand({
 			id: 'add-location-data',
 			name: 'Add location data to current note',
 			callback: () => this.addLocationData()
-		})
+		})*/
 
 		// Adds a location based on the users current GPS coordinates
 		// To-Do: Implement
+		/*
 		this.addCommand({
 			id: 'new-location-from-gps',
 			name: 'Add current location',
 			callback: () => this.addCurrentLocation()
-		});
+		});*/
 
 
 		// Adds a settings tab so the user can configure various aspects of the plugin
